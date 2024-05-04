@@ -1,0 +1,34 @@
+{
+  "name": "d1-query",
+  "version": "0.0.6",
+  "description": "TypeScript SQL query builder for Cloudflare D1 (cloud SQLite)",
+  "main": "lib/d1-query.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test",
+    "types": "bun typegen.ts",
+    "testwatch": "bun test --watch"
+  },
+  "keywords": [
+    "d1",
+    "sqlite",
+    "orm",
+    "cloudflare",
+    "active",
+    "record",
+    "query",
+    "builder",
+    "sql"
+  ],
+  "author": "ippa",
+  "license": "ISC",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240312.0",
+    "@types/bun": "^1.0.8",
+    "pluralize": "^8.0.0",
+    "toml": "^3.0.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.33.0"
+  }
+}
