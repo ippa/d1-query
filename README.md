@@ -18,7 +18,7 @@ This project is in early days. The aim is to help out with simpler, basic SQL-qu
 ```bash
 # Execute this in the same directory as wrangler.toml
 # Writes to file "d1-query-types.ts"
-bun ./node_modules/d1-query/typegen.ts"
+bun ./node_modules/d1-query/typegen.ts
 ```
 
 ## Usage

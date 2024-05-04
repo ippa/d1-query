@@ -45,7 +45,6 @@ export class D1Query<
   SC = {}
 > {
   static db: D1Database;
-  static tableName: string;
   db?: D1Database;
   options?: Option;
   // primaryKey: string = "id";
