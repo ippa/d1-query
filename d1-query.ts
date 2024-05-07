@@ -45,16 +45,28 @@ export class D1Query<
   SC = {}
 > {
   static db: D1Database;
-  db?: D1Database;
-  options?: Option;
+  #db?: D1Database;
+  #options?: Option = {};
   // primaryKey: string = "id";
   // createdAtColumn: string;
   // updatedAtColumn: string;
   #q: Record<string, any> = {};
 
+  set db(db: D1Database) {
+    this.#db = db;
+    this.#options = {...this.#options, db};
+  }
+  get db() {
+    return this.#db;
+  }
+
+  get options() {
+    return this.#options;
+  }
+
   constructor(options?: Option, query?: Record<string, any>) {
-    this.options = options;
-    this.db = options?.db;
+    this.#options = options;
+    this.#db = options?.db;
     this.#q.whereParameters = [];
     this.#q.orderBy = [];
 
@@ -67,11 +79,11 @@ export class D1Query<
 
   select(select: string | Array<string>): D1Query<DB, T, C> {
     if (Array.isArray(select)) select = select.join(", ");
-    return new D1Query(this.options, {...this.#q, select});
+    return new D1Query(this.#options, {...this.#q, select});
   }
 
   from<T extends keyof DB>(from: T) {
-    return new D1Query<DB, T, DB[T]>(this.options, {...this.#q, from});
+    return new D1Query<DB, T, DB[T]>(this.#options, {...this.#q, from});
   }
 
   where(column: keyof C, operator: SQLUnaryOperator): D1Query<DB, T, C>;
@@ -82,17 +94,17 @@ export class D1Query<
     value?: any
   ): D1Query<DB, T, C> {
     if (typeof operator === "undefined" && typeof value === "undefined") {
-      return new D1Query(this.options, {...this.#q, where: String(column)});
+      return new D1Query(this.#options, {...this.#q, where: String(column)});
     }
 
     if (typeof value === "undefined") {
-      return new D1Query(this.options, {
+      return new D1Query(this.#options, {
         ...this.#q,
         where: `${String(column)} ${operator}`,
       });
     }
 
-    return new D1Query(this.options, {
+    return new D1Query(this.#options, {
       ...this.#q,
       where: `${String(column)} ${operator} ?`,
       whereParameters: [...this.#q.whereParameters, value],
@@ -102,7 +114,7 @@ export class D1Query<
   and(column: keyof C, operator: WhereOperator, value: any) {
     if (!this.#q.where) throw "and() must come after where()";
 
-    return new D1Query<DB, T, C>(this.options, {
+    return new D1Query<DB, T, C>(this.#options, {
       ...this.#q,
       where: `${this.#q.where} AND ${String(column)} ${operator} ?`,
       whereParameters: [...this.#q.whereParameters, value],
@@ -112,7 +124,7 @@ export class D1Query<
   or(column: keyof C, operator: WhereOperator, value: any) {
     if (!this.#q.where) throw "or() must come after where()";
 
-    return new D1Query<DB, T, C>(this.options, {
+    return new D1Query<DB, T, C>(this.#options, {
       ...this.#q,
       where: `${this.#q.where} OR ${String(column)} ${operator} ?`,
       whereParameters: [...this.#q.whereParameters, value],
@@ -120,19 +132,19 @@ export class D1Query<
   }
 
   groupBy(groupBy: string): D1Query<DB, T, C, T2, C2> {
-    return new D1Query(this.options, {...this.#q, groupBy});
+    return new D1Query(this.#options, {...this.#q, groupBy});
   }
 
   having(having: string): D1Query<DB, T, C, T2, C2> {
-    return new D1Query(this.options, {...this.#q, having});
+    return new D1Query(this.#options, {...this.#q, having});
   }
 
   count(count: string = "*"): D1Query<DB, T, C> {
-    return new D1Query(this.options, {...this.#q, count});
+    return new D1Query(this.#options, {...this.#q, count});
   }
 
   deleteFrom<T extends keyof DB>(table: T): D1Query<DB, T, DB[T]> {
-    return new D1Query(this.options, {
+    return new D1Query(this.#options, {
       ...this.#q,
       deleteFrom: `DELETE FROM ${String(table)}`,
     });
@@ -156,7 +168,7 @@ export class D1Query<
 
     const insertInto = `INSERT INTO ${String(table)} (${columnNames}) VALUES (${values})`;
 
-    return new D1Query<DB, T, DB[T]>(this.options, {
+    return new D1Query<DB, T, DB[T]>(this.#options, {
       ...this.#q,
       table,
       insertInto,
@@ -164,7 +176,7 @@ export class D1Query<
   }
 
   // insertInto<T extends keyof DB, X extends keyof DB[T]>(table: T, columns: Array<X>) {
-  //   return new D1Query<DB, T, DB[T], {}, {}, Pick<DB[T], X>>(this.options, {
+  //   return new D1Query<DB, T, DB[T], {}, {}, Pick<DB[T], X>>(this.#options, {
   //     ...this.#q,
   //     table,
   //     insertInto: columns,
@@ -188,11 +200,11 @@ export class D1Query<
   //   // }
 
   //   const update = `UPDATE ${String(table)} SET ${set}`;
-  //   return new D1Query<DB, T, DB[T]>(this.options, {table, update});
+  //   return new D1Query<DB, T, DB[T]>(this.#options, {table, update});
   // }
 
   update<T extends keyof DB>(update: T) {
-    return new D1Query<DB, T, DB[T]>(this.options, {...this.#q, update});
+    return new D1Query<DB, T, DB[T]>(this.#options, {...this.#q, update});
   }
 
   set(data: Partial<C>) {
@@ -200,20 +212,20 @@ export class D1Query<
       .map((key) => `${key} = ?`)
       .join(", ");
 
-    return new D1Query<DB, T, C>(this.options, {...this.#q, set});
+    return new D1Query<DB, T, C>(this.#options, {...this.#q, set});
   }
 
   leftJoin<T2 extends keyof DB>(leftJoin: T2) {
-    return new D1Query<DB, T, C, T2, DB[T2]>(this.options, {...this.#q, leftJoin});
+    return new D1Query<DB, T, C, T2, DB[T2]>(this.#options, {...this.#q, leftJoin});
   }
   rightJoin<T2 extends keyof DB>(rightJoin: T2) {
-    return new D1Query<DB, T, C, T2, DB[T2]>(this.options, {...this.#q, rightJoin});
+    return new D1Query<DB, T, C, T2, DB[T2]>(this.#options, {...this.#q, rightJoin});
   }
   innerJoin<T2 extends keyof DB>(innerJoin: T2) {
-    return new D1Query<DB, T, C, T2, DB[T2]>(this.options, {...this.#q, innerJoin});
+    return new D1Query<DB, T, C, T2, DB[T2]>(this.#options, {...this.#q, innerJoin});
   }
   outerJoin<T2 extends keyof DB>(outerJoin: T2) {
-    return new D1Query<DB, T, C, T2, DB[T2]>(this.options, {...this.#q, outerJoin});
+    return new D1Query<DB, T, C, T2, DB[T2]>(this.#options, {...this.#q, outerJoin});
   }
 
   on(cmd: string): D1Query<DB, T, C, T2, C2>;
@@ -228,9 +240,9 @@ export class D1Query<
     column2?: `${string & T2}.${string & keyof C2}`
   ): D1Query<DB, T, C, T2, C2> {
     if (typeof operator === "undefined" && typeof column2 === "undefined") {
-      return new D1Query(this.options, {...this.#q, on: String(column)});
+      return new D1Query(this.#options, {...this.#q, on: String(column)});
     }
-    return new D1Query(this.options, {
+    return new D1Query(this.#options, {
       ...this.#q,
       on: `${String(column)} ${operator} ${String(column2)}`,
     });
@@ -238,23 +250,23 @@ export class D1Query<
 
   offset(offset: number): D1Query<DB, T, C, T2, C2> {
     // if (!this.#q.limit) this.#q.limit = 99999999;
-    return new D1Query(this.options, {...this.#q, offset});
+    return new D1Query(this.#options, {...this.#q, offset});
   }
 
   limit(limit: number): D1Query<DB, T, C, T2, C2> {
-    return new D1Query(this.options, {...this.#q, limit});
+    return new D1Query(this.#options, {...this.#q, limit});
   }
 
   orderBy<X extends keyof C & string>(
     orderBy: `${X} ${"DESC" | "ASC"}`
     // orderBy: `${"ASC" | "DESC"}`
   ): D1Query<DB, T, C, T2, C2> {
-    return new D1Query(this.options, {...this.#q, orderBy: [...this.#q.orderBy, orderBy]});
-    // return new D1Query(this.options, {...this.#q, orderBy: []});
+    return new D1Query(this.#options, {...this.#q, orderBy: [...this.#q.orderBy, orderBy]});
+    // return new D1Query(this.#options, {...this.#q, orderBy: []});
   }
 
   force(force: boolean = true): D1Query<DB, T, C, T2, C2> {
-    return new D1Query(this.options, {...this.#q, force});
+    return new D1Query(this.#options, {...this.#q, force});
   }
 
   validate() {
@@ -292,7 +304,7 @@ export class D1Query<
 
     // console.log("this.#q", this.#q);
 
-    this.#q.from ||= this.options?.table;
+    this.#q.from ||= this.#options?.table;
 
     if (
       this.#q.from &&
@@ -373,8 +385,7 @@ export class D1Query<
 
     if (!this.#q.select) sql += " RETURNING *";
 
-    const db = D1Query.db || this.db;
-
+    const db = D1Query.db || this.#db;
     const {results, success} = await db
       .prepare(sql)
       .bind(...bindlist)
@@ -389,7 +400,7 @@ export class D1Query<
 
     if (!this.#q.select) sql += " RETURNING *";
 
-    const db = D1Query.db || this.db;
+    const db = D1Query.db || this.#db;
 
     const row = await db
       .prepare(sql)
@@ -403,7 +414,7 @@ export class D1Query<
     const [sql, bindlist] = this.queryBuilder();
     this.validate();
 
-    const db = D1Query.db || this.db;
+    const db = D1Query.db || this.#db;
 
     const response = await db
       .prepare(sql)
@@ -414,7 +425,7 @@ export class D1Query<
   }
 
   async sql<T extends object>(query: string, ...params: unknown[]): Promise<EnsureArray<T>> {
-    const db = D1Query.db || this.db;
+    const db = D1Query.db || this.#db;
     if (!db) throw new Error("No database connection, try setting D1Query.db = <your_db_conn>");
 
     const {results, success} = await db
@@ -429,7 +440,7 @@ export class D1Query<
     query: string,
     ...params: unknown[]
   ): Promise<EnsureNotArray<T>> {
-    const db = D1Query.db || this.db;
+    const db = D1Query.db || this.#db;
     if (!db) throw new Error("No database connection, try setting D1Query.db = <your_db_conn>");
 
     const row = await db
@@ -442,13 +453,13 @@ export class D1Query<
 
   async tableInfo(table: string) {
     const sql = `PRAGMA table_info(${table})`;
-    const data = await this.db?.prepare(sql).all();
+    const data = await this.#db?.prepare(sql).all();
     return data;
   }
 
   async tableList(showAll = false) {
     const sql = "PRAGMA table_list";
-    let data = await this.db?.prepare(sql).all();
+    let data = await this.#db?.prepare(sql).all();
     if (!showAll) {
       // filter out special d1 tables
       const specialTables = [
