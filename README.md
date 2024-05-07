@@ -13,6 +13,14 @@ A simple, partly typesafe library for flexible queries against a Cloudflare D1 d
 
 This project is in early days. The aim is to help out with simpler, basic SQL-queries. Not all methods have detailed types. Used in prod @ Shadr.net[https://shadr.net/]
 
+## Install
+
+```bash
+yarn add d1-query
+# or
+npm install d1-query
+```
+
 ## Generate types (depends on bun and wrangler binaries)
 
 ```bash
