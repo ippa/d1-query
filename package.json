@@ -1,6 +1,6 @@
 {
   "name": "d1-query",
-  "version": "0.0.6",
+  "version": "0.0.1",
   "description": "TypeScript SQL query builder for Cloudflare D1 (cloud SQLite)",
   "main": "lib/d1-query.js",
   "type": "module",
