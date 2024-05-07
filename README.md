@@ -11,7 +11,7 @@ A simple, partly typesafe library for flexible queries against a Cloudflare D1 d
 
 ## Warning
 
-This project is in early days. The aim is to help out with simpler, basic SQL-queries. Not all methods have detailed types. Used in prod @ Shadr.net[https://shadr.net/]
+This project is in early days. The aim is to help out with simpler, basic SQL-queries. Not all methods have detailed types. Used in prod @ [Shadr.net](https://shadr.net/)
 
 ## Install
 
@@ -79,7 +79,7 @@ class PostTable extends D1Query<Database["blog"], "posts"> {
 export const postTable = new PostTable({table: "posts"});
 ```
 
-### With Remix [https://remix.run/]
+### With [Remix](https://remix.run/)
 
 ```typescript
 export async function loader({context}: LoaderFunctionArgs) {
