@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "watch": "tsc -w",
     "test": "bun test",
     "types": "bun typegen.ts",
     "testwatch": "bun test --watch"
@@ -29,6 +30,7 @@
     "pluralize": "^8.0.0",
     "toml": "^3.0.0",
     "typescript": "^5.3.3",
-    "wrangler": "^3.33.0"
+    "wrangler": "^3.33.0",
+    "@types/jest": "^29.5.12"
   }
 }
