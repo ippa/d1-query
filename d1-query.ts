@@ -212,7 +212,11 @@ export class D1Query<
       .map((key) => `${key} = ?`)
       .join(", ");
 
-    return new D1Query<DB, T, C>(this.#options, {...this.#q, set});
+    return new D1Query<DB, T, C>(this.#options, {
+      ...this.#q,
+      set,
+      setParameters: Object.values(data),
+    });
   }
 
   leftJoin<T2 extends keyof DB>(leftJoin: T2) {
@@ -343,6 +347,7 @@ export class D1Query<
       sql = `UPDATE ${this.#q.update}`;
       if (this.#q.set) {
         sql += ` SET ${this.#q.set}`;
+        bindlist.push(...this.#q.setParameters);
       }
     }
 
