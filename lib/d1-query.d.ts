@@ -12,9 +12,9 @@ type EnsureArray<T> = T extends any[] ? T : T[];
 export declare class D1Query<DB extends object, T extends keyof DB = undefined, C = DB[T] | undefined, T2 extends keyof DB = undefined, C2 = DB[T2] | undefined, SC = {}> {
     #private;
     static db: D1Database;
-    static tableName: string;
-    db?: D1Database;
-    options?: Option;
+    set db(db: D1Database);
+    get db(): D1Database;
+    get options(): Option;
     constructor(options?: Option, query?: Record<string, any>);
     select(select: string | Array<string>): D1Query<DB, T, C>;
     from<T extends keyof DB>(from: T): D1Query<DB, T, DB[T], undefined, DB[undefined], {}>;
