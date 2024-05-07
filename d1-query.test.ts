@@ -132,6 +132,11 @@ test("update", () => {
   expect(q.toSQL()).toBe("UPDATE users SET name = ? WHERE id = ?");
 });
 
+test("update #2", () => {
+  const q = d1.update("users").set({name: "foo", email: "foo@bar.com"}).where("id", "=", 1);
+  expect(q.toSQL()).toBe("UPDATE users SET name = ?, email = ? WHERE id = ?");
+});
+
 test("update without set", () => {
   const q = d1.update("users");
   expect(q.validate).toThrow();
