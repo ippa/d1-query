@@ -139,10 +139,6 @@ export class D1Query<
     return new D1Query(this.#options, {...this.#q, having});
   }
 
-  count(count: string = "*"): D1Query<DB, T, C> {
-    return new D1Query(this.#options, {...this.#q, count});
-  }
-
   deleteFrom<T extends keyof DB>(table: T): D1Query<DB, T, DB[T]> {
     return new D1Query(this.#options, {
       ...this.#q,
