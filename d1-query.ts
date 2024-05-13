@@ -39,9 +39,9 @@ type EnsureArray<T> = T extends any[] ? T : T[];
 export class D1Query<
   DB extends object,
   T extends keyof DB = undefined,
-  C = DB[T] | undefined,
+  C = DB[T],
   T2 extends keyof DB = undefined,
-  C2 = DB[T2] | undefined,
+  C2 = DB[T2],
   SC = {}
 > {
   static db: D1Database;
