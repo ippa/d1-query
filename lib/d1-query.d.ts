@@ -9,7 +9,7 @@ type Option = {
 };
 type EnsureNotArray<T> = T extends any[] ? never : T;
 type EnsureArray<T> = T extends any[] ? T : T[];
-export declare class D1Query<DB extends object, T extends keyof DB = undefined, C = DB[T] | undefined, T2 extends keyof DB = undefined, C2 = DB[T2] | undefined, SC = {}> {
+export declare class D1Query<DB extends object, T extends keyof DB = undefined, C = DB[T], T2 extends keyof DB = undefined, C2 = DB[T2], SC = {}> {
     #private;
     static db: D1Database;
     set db(db: D1Database);
@@ -24,7 +24,6 @@ export declare class D1Query<DB extends object, T extends keyof DB = undefined, 
     or(column: keyof C, operator: WhereOperator, value: any): D1Query<DB, T, C, undefined, DB[undefined], {}>;
     groupBy(groupBy: string): D1Query<DB, T, C, T2, C2>;
     having(having: string): D1Query<DB, T, C, T2, C2>;
-    count(count?: string): D1Query<DB, T, C>;
     deleteFrom<T extends keyof DB>(table: T): D1Query<DB, T, DB[T]>;
     insertInto<T extends keyof DB>(table: T, data: Partial<DB[T]>): D1Query<DB, T, DB[T], undefined, DB[undefined], {}>;
     update<T extends keyof DB>(update: T): D1Query<DB, T, DB[T], undefined, DB[undefined], {}>;
