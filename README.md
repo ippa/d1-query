@@ -79,6 +79,11 @@ class PostTable extends D1Query<Database["blog"], "posts"> {
 export const postTable = new PostTable({table: "posts"});
 ```
 
+```typescript
+import {postTable} from "./PostTable";
+const top5 = await postTable.latestPost(5);
+```
+
 ### With [Remix](https://remix.run/)
 
 ```typescript
@@ -93,7 +98,8 @@ export async function loader({context}: LoaderFunctionArgs) {
 ## Fallback to SQL
 
 ```typescript
-const list = await d1.sql<User>("SELECT id,name FROM users", parameters); // returns an array of User
-// or
-const row = await d1.sqlFirst<User>("SELECT * FROM users WHERE id = ?", parameters); // returns a User
+// returns an array of User
+const list = await d1.sql<User>("SELECT * FROM users WHERE age >= ? AND age <= ?", minAge, maxAge);
+// returns an User
+const row = await d1.sqlFirst<User>("SELECT * FROM users WHERE id = ?", id);
 ```
